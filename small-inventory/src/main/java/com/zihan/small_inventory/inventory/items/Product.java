@@ -32,10 +32,7 @@ public class Product {
         Product product = new Product();
         product.productId = UUID.randomUUID().toString();
         product.shopId = shopId;
-
-        // if categoryId is null, assign default
-        product.categoryId = (categoryId != null) ? categoryId : Category.DEFAULT_CATEGORY_ID;
-
+        product.categoryId =categoryId;
         product.name = name;
         product.stock = stock;
         product.price = price;
