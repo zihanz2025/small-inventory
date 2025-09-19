@@ -2,6 +2,7 @@ package com.zihan.small_inventory.inventory.controllers;
 
 import com.zihan.small_inventory.inventory.items.Shop;
 import com.zihan.small_inventory.inventory.services.ShopService;
+import com.zihan.small_inventory.utils.ResponseUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,25 +18,11 @@ public class ShopController {
         this.shopService = shopService;
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<String> testDbConnection() {
-        try {
-            // Try to list tables in DynamoDB
-            List<String> tableNames = shopService.listTables();
-            return ResponseEntity.ok("DynamoDB is reachable. Tables: " + tableNames);
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body("Failed to connect to DynamoDB: " + e.getMessage());
-        }
-    }
-
-
     // Create a new shop (frontend passes raw password inside Shop)
     @PostMapping
-    public ResponseEntity<Shop> createShop(@RequestBody Shop shopInput) {
-        System.out.println("Owner password: " + shopInput.getOwnerPassword());
-        Shop createdShop = shopService.createShop(shopInput);
-        return ResponseEntity.ok(createdShop);
+    public ResponseEntity<ResponseUtil<Shop>> createShop(@RequestBody Shop shop) {
+        ResponseUtil<Shop> response = shopService.createShop(shop);
+        return ResponseEntity.ok(response);
     }
 
     // Get a shop by ID
