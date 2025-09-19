@@ -57,6 +57,6 @@ public class ShopService {
     }
 
     public Optional<Shop> getShop(String shopId) {
-        return shopRepository.findById(shopId);
+        return shopRepository.findByShopId(shopId);
     }
 }

@@ -91,9 +91,9 @@ public class ShopRepository {
         return shop;
     }
 
-    public Optional<Shop> findById(String shopId) {
+    public Optional<Shop> findById(String keyId) {
         return Optional.ofNullable(
-                shopTable.getItem(r -> r.key(k -> k.partitionValue(shopId)))
+                shopTable.getItem(r -> r.key(k -> k.partitionValue(keyId)))
         );
     }
 
