@@ -22,7 +22,7 @@ public class Product {
 
     public static Product newProduct(
             String shopId,
-            String categoryId,      // optional, can be null
+            String categoryId,
             String name,
             int stock,
             double price,
@@ -32,7 +32,7 @@ public class Product {
         Product product = new Product();
         product.productId = UUID.randomUUID().toString();
         product.shopId = shopId;
-        product.categoryId =categoryId;
+        product.categoryId = categoryId;
         product.name = name;
         product.stock = stock;
         product.price = price;
