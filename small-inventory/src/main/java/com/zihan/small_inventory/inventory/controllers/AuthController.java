@@ -27,6 +27,9 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseUtil<Shop> register(@RequestBody Shop shop) {
+        System.out.println("Received shop: " + shop.getShopName());
+        System.out.println("Received shop: " + shop.getOwnerEmail());
+        System.out.println("Received shop: " + shop.getOwnerPassword());
         return authService.registerShop(shop);
     }
 

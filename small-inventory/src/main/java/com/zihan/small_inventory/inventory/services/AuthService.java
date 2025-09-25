@@ -26,15 +26,15 @@ public class AuthService {
     public ResponseUtil<Shop> registerShop(Shop shop) {
 
         if (shop.getShopId() == null || shop.getShopId().isBlank() || shop.getShopId().length() <8) {
-            return new ResponseUtil<>("Shop ID must be at least 8 characters.", 400);
+            return new ResponseUtil<>("Shop ID must be at least 8 characters.", 401);
         }
 
         if (shop.getOwnerPassword() == null || shop.getOwnerPassword().length() < 8) {
-            return new ResponseUtil<>("Password must be at least 8 characters.", 400);
+            return new ResponseUtil<>("Password must be at least 8 characters.", 402);
         }
 
         if (shopRepository.shopIdExists(shop.getShopId())) {
-            return new ResponseUtil<>("Shop ID already exists.", 400);
+            return new ResponseUtil<>("Shop ID already exists.", 403);
         }
         // hash the raw password and replace it
         String hashedPassword = passwordEncoder.encode(shop.getOwnerPassword());
@@ -54,12 +54,12 @@ public class AuthService {
     public ResponseUtil<Map<String, Object>> loginShop(String shopId, String rawPassword) {
         Optional<Shop> shopOpt = shopRepository.findByShopId(shopId);
         if (shopOpt.isEmpty()) {
-            return new ResponseUtil<>("Shop ID not found", 401);
+            return new ResponseUtil<>("Shop ID not found", 404);
         }
 
         Shop shop = shopOpt.get();
         if (!passwordEncoder.matches(rawPassword, shop.getOwnerPassword())) {
-            return new ResponseUtil<>("Incorrect password", 401);
+            return new ResponseUtil<>("Incorrect password", 405);
         }
 
         String token = jwtUtil.generateToken(shopId);
