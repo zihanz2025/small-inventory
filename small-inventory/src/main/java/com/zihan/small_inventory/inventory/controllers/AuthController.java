@@ -1,38 +1,41 @@
 package com.zihan.small_inventory.inventory.controllers;
 
+import com.zihan.small_inventory.inventory.items.Shop;
 import com.zihan.small_inventory.inventory.services.AuthService;
+import com.zihan.small_inventory.inventory.services.ShopService;
 import com.zihan.small_inventory.utils.ResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * Controller for authentication-related endpoints.
+ */
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
-    public AuthController(AuthService authService)
-    {
-        this.authService = authService;
+
+    public AuthController(AuthService authService) {this.authService = authService;}
+
+    /**
+     * Register a new shop.
+     */
+    @PostMapping("/register")
+    public ResponseUtil<Shop> register(@RequestBody Shop shop) {
+        return authService.registerShop(shop);
     }
 
+    /**
+     * Login in as shop owner.
+     */
     @PostMapping("/login")
-    public ResponseEntity<ResponseUtil<Map<String, Object>>> login(
-            @RequestParam String shopId,
-            @RequestParam String password) {
-
-        ResponseUtil<Map<String, Object>> result = authService.login(shopId, password);
-
-        if (result.isSuccess()) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
-        }
+    public ResponseUtil<Map<String, Object>> login(@RequestParam String shopId, @RequestParam String password) {
+        return authService.loginShop(shopId, password);
     }
+
 }

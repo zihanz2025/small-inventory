@@ -29,22 +29,22 @@ public class ProductService {
 
         // Check shop exists
         if (shopRepository.findByShopId(product.getShopId()).isEmpty()) {
-            return new ResponseUtil<>("Invalid shopId: shop does not exist.");
+            return new ResponseUtil<>("Invalid shopId: shop does not exist.", 403);
         }
 
         // Check category exists and belongs to this shop
         Optional<Category> categoryOpt = categoryRepository.findById(product.getCategoryId());
         if (categoryOpt.isEmpty()) {
-            return new ResponseUtil<>("Invalid categoryId: category does not exist.");
+            return new ResponseUtil<>("Invalid categoryId: category does not exist.", 403);
         }
 
         if (!categoryOpt.get().getShopId().equals(product.getShopId())) {
-            return new ResponseUtil<>("Invalid categoryId: category does not exist in the given shop.");
+            return new ResponseUtil<>("Invalid categoryId: category does not exist in the given shop.", 403);
         }
         // Validate fields
         String validationError = validateProduct(product);
         if (validationError != null) {
-            return new ResponseUtil<>(validationError);
+            return new ResponseUtil<>(validationError, 403);
         }
         product = Product.newProduct(
                 product.getShopId(),
@@ -68,7 +68,7 @@ public class ProductService {
     public ResponseUtil<Product> getProductById(String productId) {
         Optional<Product> product = productRepository.findById(productId);
         if (product.isEmpty()) {
-            return new ResponseUtil<>("Product not found.");
+            return new ResponseUtil<>("Product not found.", 403);
         }
         return new ResponseUtil<>(product.get());
     }
@@ -76,22 +76,22 @@ public class ProductService {
     public ResponseUtil<Product> updateProduct(Product product) {
         Optional<Product> existing = productRepository.findById(product.getProductId());
         if (existing.isEmpty()) {
-            return new ResponseUtil<>("Product not found");
+            return new ResponseUtil<>("Product not found", 403);
         }
         // Check category exists and belongs to this shop
         Optional<Category> categoryOpt = categoryRepository.findById(product.getCategoryId());
         if (categoryOpt.isEmpty()) {
-            return new ResponseUtil<>("Invalid categoryId: category does not exist.");
+            return new ResponseUtil<>("Invalid categoryId: category does not exist.", 403);
         }
         System.out.println(categoryOpt.get().getShopId());
         System.out.println(product.getShopId());
         if (!categoryOpt.get().getShopId().equals(product.getShopId())) {
-            return new ResponseUtil<>("Invalid categoryId: category does not exist in the given shop.");
+            return new ResponseUtil<>("Invalid categoryId: category does not exist in the given shop.", 403);
         }
 
         String validationError = validateProduct(product);
         if (validationError != null) {
-            return new ResponseUtil<>(validationError);
+            return new ResponseUtil<>(validationError, 403);
         }
 
         Product updated = existing.get();
@@ -111,11 +111,11 @@ public class ProductService {
     public ResponseUtil<String> deleteProduct(String productId) {
         Optional<Product> existing = productRepository.findById(productId);
         if (existing.isEmpty()) {
-            return new ResponseUtil<>("Product not found");
+            return new ResponseUtil<>("Product not found", 403);
         }
 
         productRepository.delete(productId);
-        return new ResponseUtil<>("Product deleted successfully.");
+        return new ResponseUtil<>("Product deleted successfully.", 200);
     }
 
     // Helper to validate product fields

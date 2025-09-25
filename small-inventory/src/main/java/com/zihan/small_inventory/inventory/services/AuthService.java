@@ -23,21 +23,49 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    public ResponseUtil<Map<String, Object>> login(String shopId, String rawPassword) {
+    public ResponseUtil<Shop> registerShop(Shop shop) {
+
+        if (shop.getShopId() == null || shop.getShopId().isBlank() || shop.getShopId().length() <8) {
+            return new ResponseUtil<>("Shop ID must be at least 8 characters.", 400);
+        }
+
+        if (shop.getOwnerPassword() == null || shop.getOwnerPassword().length() < 8) {
+            return new ResponseUtil<>("Password must be at least 8 characters.", 400);
+        }
+
+        if (shopRepository.shopIdExists(shop.getShopId())) {
+            return new ResponseUtil<>("Shop ID already exists.", 400);
+        }
+        // hash the raw password and replace it
+        String hashedPassword = passwordEncoder.encode(shop.getOwnerPassword());
+        shop.setOwnerPassword(hashedPassword);
+
+        Shop newShop = Shop.newShop(
+                shop.getShopId(),
+                shop.getShopName(),
+                shop.getOwnerEmail(),
+                shop.getOwnerPassword()
+        );
+
+        Shop savedShop = shopRepository.save(newShop);
+        return new ResponseUtil<>(savedShop);
+    }
+
+    public ResponseUtil<Map<String, Object>> loginShop(String shopId, String rawPassword) {
         Optional<Shop> shopOpt = shopRepository.findByShopId(shopId);
         if (shopOpt.isEmpty()) {
-            return new ResponseUtil<>("Shop ID not found");
+            return new ResponseUtil<>("Shop ID not found", 401);
         }
 
         Shop shop = shopOpt.get();
         if (!passwordEncoder.matches(rawPassword, shop.getOwnerPassword())) {
-            return new ResponseUtil<>("Incorrect password");
+            return new ResponseUtil<>("Incorrect password", 401);
         }
 
         String token = jwtUtil.generateToken(shopId);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("shop", shop);
+        data.put("shopId", shop.getShopId());
         data.put("token", token);
 
         return new ResponseUtil<>(data);

@@ -18,13 +18,6 @@ public class ShopController {
         this.shopService = shopService;
     }
 
-    // Create a new shop (frontend passes raw password inside Shop)
-    @PostMapping
-    public ResponseEntity<ResponseUtil<Shop>> createShop(@RequestBody Shop shop) {
-        ResponseUtil<Shop> response = shopService.createShop(shop);
-        return ResponseEntity.ok(response);
-    }
-
     // Get a shop by ID
     @GetMapping("/{id}")
     public ResponseEntity<Shop> getShop(@PathVariable String id) {

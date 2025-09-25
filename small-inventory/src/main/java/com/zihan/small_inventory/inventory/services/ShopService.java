@@ -28,34 +28,6 @@ public class ShopService {
         this.dynamoDbClient = dynamoDbClient;
     }
 
-    public ResponseUtil<Shop> createShop(Shop shop) {
-
-        if (shop.getShopId() == null || shop.getShopId().isBlank() || shop.getShopId().length() <8) {
-            return new ResponseUtil<>("Shop ID must be at least 8 characters.");
-        }
-
-        if (shop.getOwnerPassword() == null || shop.getOwnerPassword().length() < 8) {
-            return new ResponseUtil<>("Password must be at least 8 characters.");
-        }
-
-        if (shopRepository.shopIdExists(shop.getShopId())) {
-            return new ResponseUtil<>("Shop ID already exists.");
-        }
-        // hash the raw password and replace it
-        String hashedPassword = passwordEncoder.encode(shop.getOwnerPassword());
-        shop.setOwnerPassword(hashedPassword);
-
-        Shop newShop = Shop.newShop(
-                shop.getShopId(),
-                shop.getShopName(),
-                shop.getOwnerEmail(),
-                shop.getOwnerPassword()
-        );
-
-        Shop savedShop = shopRepository.save(newShop);
-        return new ResponseUtil<>(savedShop);
-    }
-
     public Optional<Shop> getShop(String shopId) {
         return shopRepository.findByShopId(shopId);
     }

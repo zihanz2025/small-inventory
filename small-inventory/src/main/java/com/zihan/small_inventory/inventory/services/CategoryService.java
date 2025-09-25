@@ -20,7 +20,7 @@ public class CategoryService {
     // Create a new category (with name duplication check)
     public ResponseUtil<Category> createCategory(String shopId, String name) {
         if (categoryRepository.findByShopIdAndName(shopId, name)) {
-            return new ResponseUtil<>("Category name already exists for this shop.");
+            return new ResponseUtil<>("Category name already exists for this shop.", 402);
         }
 
         Category category = Category.newCategory(shopId, name);
@@ -38,7 +38,7 @@ public class CategoryService {
     public ResponseUtil<Category> getCategory(String shopId, String categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty() || !category.get().getShopId().equals(shopId)) {
-            return new ResponseUtil<>("Category not found for this shop.");
+            return new ResponseUtil<>("Category not found for this shop.", 402);
         }
         return new ResponseUtil<>(category.get());
     }
@@ -47,14 +47,14 @@ public class CategoryService {
     public ResponseUtil<Category> updateCategory(String shopId, String categoryId, String newName) {
         Optional<Category> categoryOpt = categoryRepository.findById(categoryId);
         if (categoryOpt.isEmpty() || !categoryOpt.get().getShopId().equals(shopId)) {
-            return new ResponseUtil<>("Category not found for this shop.");
+            return new ResponseUtil<>("Category not found for this shop.", 402);
         }
 
         Category category = categoryOpt.get();
 
         // Check for name duplication
         if (categoryRepository.findByShopIdAndName(shopId, newName)) {
-            return new ResponseUtil<>("Category name already exists for this shop.");
+            return new ResponseUtil<>("Category name already exists for this shop.", 402);
         }
 
         category.setName(newName);
@@ -66,10 +66,10 @@ public class CategoryService {
     public ResponseUtil<String> deleteCategory(String shopId, String categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty() || !category.get().getShopId().equals(shopId)) {
-            return new ResponseUtil<>("Category not found for this shop.");
+            return new ResponseUtil<>("Category not found for this shop.", 402);
         }
 
         categoryRepository.delete(shopId, categoryId);
-        return new ResponseUtil<>("Category deleted successfully.");
+        return new ResponseUtil<>("Category deleted successfully.", 402);
     }
 }

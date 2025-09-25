@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     // Ideally store this in application.properties or environment variable
-    private final String secret = "supersecretkeythatneedstobeatleast256bitslong!";
+    private final String secret = "mykeythatisusedtomaketheshopfortheinventorysystem";
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
     // Token validity in milliseconds (e.g., 1 hour)
@@ -40,7 +40,6 @@ public class JwtUtil {
             return false;
         }
     }
-
     // Extract shopId from token
     public String getShopIdFromToken(String token) {
         Claims claims = Jwts.parser()
