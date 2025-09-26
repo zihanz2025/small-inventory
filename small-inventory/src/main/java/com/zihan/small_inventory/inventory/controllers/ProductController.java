@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/shops/{shopId}/products")
+@RequestMapping("shops/{shopId}/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -23,7 +23,7 @@ public class ProductController {
             @RequestBody Product request
     ) {
         request.setShopId(shopId);
-        return productService.createProduct(request);
+        return productService.createProduct(shopId, request);
     }
 
     @GetMapping
@@ -35,8 +35,9 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseUtil<Product> getProductById(@PathVariable String productId) {
-        return productService.getProductById(productId);
+    public ResponseUtil<Product> getProductById(@PathVariable String shopId,
+                                                @PathVariable String productId) {
+        return productService.getProductById(shopId, productId);
     }
 
     @PutMapping("/{productId}")
@@ -47,12 +48,13 @@ public class ProductController {
     ) {
         request.setProductId(productId);
         request.setShopId(shopId);
-        return productService.updateProduct(request);
+        return productService.updateProduct(shopId, request);
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseUtil<String> deleteProduct(@PathVariable String productId) {
-        return productService.deleteProduct(productId);
+    public ResponseUtil<String> deleteProduct(@PathVariable String shopId,
+                                              @PathVariable String productId) {
+        return productService.deleteProduct(shopId, productId);
     }
 }
 

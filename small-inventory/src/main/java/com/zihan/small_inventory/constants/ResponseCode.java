@@ -15,6 +15,14 @@ public final class ResponseCode {
     public static final int SHOP_INVALID_PASSWORD = 402;
     public static final int SHOP_UPDATE_FAILED = 403;
 
+    //Category related errors
+    public static final int CATEGORY_DUPLICATE_NAME = 405;
+    public static final int CATEGORY_NOT_FOUND = 406;
+
+    //Product related errors
+    public static final int PRODUCT_NOT_FOUND = 407;
+    public static final int PRODUCT_INVALID_INFO = 408;
+
     // Auth related errors
     public static final int AUTH_TOKEN_FAILED = 501;
     public static final int AUTH_ROLE_FAILED = 502;

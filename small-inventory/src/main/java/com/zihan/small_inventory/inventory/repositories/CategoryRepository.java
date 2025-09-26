@@ -63,7 +63,6 @@ public class CategoryRepository {
     }
 
     // Find all categories for a given shopId
-// Find all categories for a given shopId
     public List<Category> findByShopId(String shopId) {
         return categoryTable.query(r -> r.queryConditional(
                         QueryConditional.keyEqualTo(Key.builder().partitionValue(shopId).build())

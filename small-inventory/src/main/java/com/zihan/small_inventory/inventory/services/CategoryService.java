@@ -1,8 +1,10 @@
 package com.zihan.small_inventory.inventory.services;
 
+import com.zihan.small_inventory.constants.ResponseCode;
 import com.zihan.small_inventory.inventory.items.Category;
 import com.zihan.small_inventory.inventory.repositories.CategoryRepository;
 import com.zihan.small_inventory.utils.ResponseUtil;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +20,10 @@ public class CategoryService {
     }
 
     // Create a new category (with name duplication check)
+    @PreAuthorize("#shopId == authentication.principal.shopId")
     public ResponseUtil<Category> createCategory(String shopId, String name) {
         if (categoryRepository.findByShopIdAndName(shopId, name)) {
-            return new ResponseUtil<>("Category name already exists for this shop.", 402);
+            return new ResponseUtil<>("Category name already exists for this shop.", ResponseCode.CATEGORY_DUPLICATE_NAME);
         }
 
         Category category = Category.newCategory(shopId, name);
@@ -29,32 +32,35 @@ public class CategoryService {
     }
 
     // Get all categories for a shop
+    @PreAuthorize("#shopId == authentication.principal.shopId")
     public ResponseUtil<List<Category>> getCategoriesByShop(String shopId) {
         List<Category> categories = categoryRepository.findByShopId(shopId);
         return new ResponseUtil<>(categories);
     }
 
-    // Get a single category
+    // Get a single
+    @PreAuthorize("#shopId == authentication.principal.shopId")
     public ResponseUtil<Category> getCategory(String shopId, String categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty() || !category.get().getShopId().equals(shopId)) {
-            return new ResponseUtil<>("Category not found for this shop.", 402);
+            return new ResponseUtil<>("Category not found for this shop.", ResponseCode.CATEGORY_NOT_FOUND);
         }
         return new ResponseUtil<>(category.get());
     }
 
     // Update category name
+    @PreAuthorize("#shopId == authentication.principal.shopId")
     public ResponseUtil<Category> updateCategory(String shopId, String categoryId, String newName) {
         Optional<Category> categoryOpt = categoryRepository.findById(categoryId);
         if (categoryOpt.isEmpty() || !categoryOpt.get().getShopId().equals(shopId)) {
-            return new ResponseUtil<>("Category not found for this shop.", 402);
+            return new ResponseUtil<>("Category not found for this shop.", ResponseCode.CATEGORY_NOT_FOUND);
         }
 
         Category category = categoryOpt.get();
 
         // Check for name duplication
         if (categoryRepository.findByShopIdAndName(shopId, newName)) {
-            return new ResponseUtil<>("Category name already exists for this shop.", 402);
+            return new ResponseUtil<>("Category name already exists for this shop.", ResponseCode.CATEGORY_DUPLICATE_NAME);
         }
 
         category.setName(newName);
@@ -63,13 +69,14 @@ public class CategoryService {
     }
 
     // Delete a category
+    @PreAuthorize("#shopId == authentication.principal.shopId")
     public ResponseUtil<String> deleteCategory(String shopId, String categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty() || !category.get().getShopId().equals(shopId)) {
-            return new ResponseUtil<>("Category not found for this shop.", 402);
+            return new ResponseUtil<>("Category not found for this shop.", ResponseCode.CATEGORY_NOT_FOUND);
         }
 
         categoryRepository.delete(shopId, categoryId);
-        return new ResponseUtil<>("Category deleted successfully.", 402);
+        return new ResponseUtil<>("Category deleted successfully.", ResponseCode.SUCCESS);
     }
 }
