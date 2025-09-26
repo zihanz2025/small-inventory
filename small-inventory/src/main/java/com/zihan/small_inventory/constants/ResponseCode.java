@@ -10,16 +10,15 @@ public final class ResponseCode {
     public static final int REGISTRATION_FAILED = 400;
     public static final int LOGIN_FAILED = 401;
 
-
     // Shop related errors
-    public static final int SHOP_ID_EXISTS = 401;
-    public static final int SHOP_ID_NOT_FOUND = 402;
-    public static final int SHOP_INVALID_PASSWORD = 403;
-    public static final int SHOP_UNAUTHORIZED = 404;
+    public static final int SHOP_ID_NOT_FOUND = 401;
+    public static final int SHOP_INVALID_PASSWORD = 402;
+    public static final int SHOP_UPDATE_FAILED = 403;
 
     // Auth related errors
-    public static final int AUTH_INVALID_TOKEN = 501;
-    public static final int AUTH_EXPIRED_TOKEN = 502;
+    public static final int AUTH_TOKEN_FAILED = 501;
+    public static final int AUTH_ROLE_FAILED = 502;
+
 
     // Generic errors
     public static final int INTERNAL_ERROR = 900;

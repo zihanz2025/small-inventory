@@ -1,5 +1,6 @@
 package com.zihan.small_inventory.inventory.services;
 
+import com.zihan.small_inventory.constants.ResponseCode;
 import com.zihan.small_inventory.inventory.items.Shop;
 import com.zihan.small_inventory.inventory.repositories.ShopRepository;
 import com.zihan.small_inventory.utils.ResponseUtil;
@@ -23,7 +24,7 @@ public class ShopService {
     @PreAuthorize("#shopId == authentication.principal.shopId or hasRole('ADMIN')")
     public ResponseUtil<Shop> getShop(String shopId) {
         var shopOpt = shopRepository.findByShopId(shopId);
-        if (shopOpt.isEmpty()) return new ResponseUtil<>("Shop not found", 501);
+        if (shopOpt.isEmpty()) return new ResponseUtil<>("Shop not found", ResponseCode.SHOP_ID_NOT_FOUND);
 
         Shop shop = shopOpt.get();
         return new ResponseUtil<>(shop);
@@ -32,7 +33,7 @@ public class ShopService {
     @PreAuthorize("#shopId == authentication.principal.shopId")
     public ResponseUtil<Shop> updateShopName(String shopId, String newName) {
         var shopOpt = shopRepository.findByShopId(shopId);
-        if (shopOpt.isEmpty()) return new ResponseUtil<>("Shop not found", 502);
+        if (shopOpt.isEmpty()) return new ResponseUtil<>("Shop not found", ResponseCode.SHOP_ID_NOT_FOUND);
 
         Shop shop = shopOpt.get();
         shop.setShopName(newName);
@@ -44,15 +45,15 @@ public class ShopService {
     @PreAuthorize("#shopId == authentication.principal.shopId")
     public ResponseUtil<Shop> updatePassword(String shopId, String oldPassword, String newPassword) {
         var shopOpt = shopRepository.findByShopId(shopId);
-        if (shopOpt.isEmpty()) return new ResponseUtil<>("Shop not found.", 503);
+        if (shopOpt.isEmpty()) return new ResponseUtil<>("Shop not found.", ResponseCode.SHOP_ID_NOT_FOUND);
 
         Shop shop = shopOpt.get();
 
         if (!passwordEncoder.matches(oldPassword, shop.getOwnerPassword())) {
-            return new ResponseUtil<>("Old password does not match.", 504);
+            return new ResponseUtil<>("Old password does not match.", ResponseCode.SHOP_INVALID_PASSWORD);
         }
         if (newPassword == null || newPassword.length() < 8) {
-            return new ResponseUtil<>("Password must be at least 8 characters.", 505);
+            return new ResponseUtil<>("Password must be at least 8 characters.", ResponseCode.SHOP_UPDATE_FAILED);
         }
         shop.setOwnerPassword(passwordEncoder.encode(newPassword));
         shopRepository.save(shop);
@@ -64,22 +65,22 @@ public class ShopService {
     public ResponseUtil<String> deleteOwnShop(String shopId, String password) {
         Optional<Shop> existing = shopRepository.findByShopId(shopId);
         if (existing.isEmpty()) {
-            return new ResponseUtil<>("Shop not found.", 506);
+            return new ResponseUtil<>("Shop not found.", ResponseCode.SHOP_ID_NOT_FOUND);
         }
         if (!passwordEncoder.matches(password, existing.get().getOwnerPassword())) {
-            return new ResponseUtil<>("Old password does not match.", 507);
+            return new ResponseUtil<>("Old password does not match.", ResponseCode.SHOP_INVALID_PASSWORD);
         }
         shopRepository.delete(shopId);
-        return new ResponseUtil<>("Shop deleted successfully.", 200);
+        return new ResponseUtil<>("Shop deleted successfully.", ResponseCode.SUCCESS);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseUtil<String> deleteShop(String shopId) {
         Optional<Shop> existing = shopRepository.findByShopId(shopId);
         if (existing.isEmpty()) {
-            return new ResponseUtil<>("Shop not found.", 506);
+            return new ResponseUtil<>("Shop not found.", ResponseCode.SHOP_ID_NOT_FOUND);
         }
         shopRepository.delete(shopId);
-        return new ResponseUtil<>("Shop deleted successfully.", 200);
+        return new ResponseUtil<>("Shop deleted successfully.",ResponseCode.SUCCESS);
     }
 }

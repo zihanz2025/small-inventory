@@ -1,5 +1,6 @@
 package com.zihan.small_inventory.config;
 
+import com.zihan.small_inventory.constants.ResponseCode;
 import com.zihan.small_inventory.security.JwtAuthenticationFilter;
 import com.zihan.small_inventory.utils.JwtUtil;
 import com.zihan.small_inventory.utils.ResponseUtil;
@@ -13,6 +14,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +30,8 @@ public class SecurityConfig{
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+
         http
                 // Disable CSRF (not needed for stateless JWT)
                 .csrf(csrf -> csrf.disable())
@@ -39,6 +45,18 @@ public class SecurityConfig{
                 )
                 // Stateless session (required for JWT)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(200);
+                            response.setContentType("application/json");
+
+                            ResponseUtil<Map<String, Object>> error =
+                                    new ResponseUtil<>("Unauthorized: " + authException.getMessage(), ResponseCode.AUTH_TOKEN_FAILED);
+
+                            response.getWriter().write(objectMapper.writeValueAsString(error));
+                        })
+                )
 
                 // Add JWT filter before Spring Security's default filter
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

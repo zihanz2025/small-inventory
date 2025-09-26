@@ -1,9 +1,6 @@
 package com.zihan.small_inventory;
 
 import com.zihan.small_inventory.constants.ResponseCode;
-import com.zihan.small_inventory.inventory.items.Shop;
-import com.zihan.small_inventory.inventory.repositories.ShopRepository;
-import com.zihan.small_inventory.inventory.services.ShopService;
 import com.zihan.small_inventory.utils.ResponseUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Map;
 
@@ -36,7 +32,6 @@ public class AuthTests {
                 "ownerPassword", "password123"
         );
         ResponseUtil<?> registerResponse = restTemplate.postForObject("/auth/register", registerRequest, ResponseUtil.class);
-        System.out.println(registerResponse.getMessage());
         assertTrue(registerResponse.isSuccess());
     }
 
@@ -162,8 +157,6 @@ public class AuthTests {
         ResponseUtil<Void> bodyDelete = deleteResponse.getBody();
         assertNotNull(bodyDelete);
         assertTrue(bodyDelete.isSuccess());
-
-
     }
 
     // Login with invalid admin id
