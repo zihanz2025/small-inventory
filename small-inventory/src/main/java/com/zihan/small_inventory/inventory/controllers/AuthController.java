@@ -27,18 +27,22 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseUtil<Shop> register(@RequestBody Shop shop) {
-        System.out.println("Received shop: " + shop.getShopName());
-        System.out.println("Received shop: " + shop.getOwnerEmail());
-        System.out.println("Received shop: " + shop.getOwnerPassword());
         return authService.registerShop(shop);
     }
-
     /**
      * Login in as shop owner.
      */
     @PostMapping("/login")
     public ResponseUtil<Map<String, Object>> login(@RequestParam String shopId, @RequestParam String password) {
         return authService.loginShop(shopId, password);
+    }
+
+    /**
+     * Admin login.
+     */
+    @PostMapping("/admin")
+    public ResponseUtil<Map<String, Object>> loginAdmin(@RequestParam String adminId, @RequestParam String adminPassword) {
+        return authService.loginAdmin(adminId, adminPassword);
     }
 
 }

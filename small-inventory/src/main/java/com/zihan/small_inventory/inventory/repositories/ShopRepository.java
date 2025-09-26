@@ -121,5 +121,18 @@ public class ShopRepository {
                 .stream()
                 .anyMatch(page -> !page.items().isEmpty());
     }
+
+    public void delete(String shopId) {
+        var index = shopTable.index("shopId");
+
+        QueryConditional query = QueryConditional.keyEqualTo(k -> k.partitionValue(shopId));
+
+        Optional<Shop> shop = index.query(query)
+                .stream()
+                .flatMap(page -> page.items().stream())
+                .findFirst();
+
+        shopTable.deleteItem(r -> r.key(k -> k.partitionValue(shop.get().getKeyId())));
+    }
 }
 

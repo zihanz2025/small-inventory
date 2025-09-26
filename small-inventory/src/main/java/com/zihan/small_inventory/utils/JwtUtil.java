@@ -19,9 +19,10 @@ public class JwtUtil {
     private final long jwtExpirationMs = 3600_000;
 
     // Generate a JWT token
-    public String generateToken(String shopId) {
+    public String generateToken(String shopId, String role) {
         return Jwts.builder()
                 .setSubject(shopId)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -48,5 +49,16 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
+    }
+    /**
+     * Extract role from token
+     */
+    public String getRoleFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
     }
 }

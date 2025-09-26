@@ -1,5 +1,7 @@
 package com.zihan.small_inventory.utils;
 
+import com.zihan.small_inventory.constants.ResponseCode;
+
 public class ResponseUtil<T> {
     private T data;
     private String message;
@@ -9,7 +11,7 @@ public class ResponseUtil<T> {
 
     public ResponseUtil(T data) {
         this.data = data;
-        this.code = 200;
+        this.code = ResponseCode.SUCCESS;
         this.message = "Success";
     }
 
@@ -30,10 +32,10 @@ public class ResponseUtil<T> {
     public void setCode(int code) {this.code = code;}
 
     public boolean isSuccess(){
-        return this.code==200;
+        return this.code == ResponseCode.SUCCESS;
     }
 
     public boolean validateCode(int code){
-        return this.code==code;
+        return this.code == code;
     }
 }
