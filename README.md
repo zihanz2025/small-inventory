@@ -32,12 +32,11 @@ The system will eventually consist of separate services, each running as an inde
 
 ## 📦 Current Component: Inventory Service
 
-### Purpose
 The Inventory Service acts as the backbone for managing all product-related data for a single shop.  
 It provides APIs to create and manage:
 - Shops  
 - Product Categories  
 - Products and their stock levels  
 
-### Structure
+
 
